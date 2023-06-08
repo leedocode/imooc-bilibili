@@ -118,5 +118,9 @@ public class UserService {
         }
     }
 
+    public User getUserById(Long followingId) {
+        return userDao.getUserById(followingId);
+    }
+
 
 }
