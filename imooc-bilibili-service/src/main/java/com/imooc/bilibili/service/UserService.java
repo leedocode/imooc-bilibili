@@ -105,8 +105,18 @@ public class UserService {
         user.setUpdateTime(new Date());
         Integer cnt = userDao.updateUserByPrimaryKeySelective(user);
         if (cnt < 0) {
-            throw new ConditionException("更新失败，服务端错误");
+            throw new ConditionException("更新user失败，服务端错误");
         }
         return cnt;
     }
+
+    public void updateUserInfo(UserInfo userInfo) {
+        userInfo.setUpdateTime(new Date());
+        Integer cnt = userDao.updateUserInfo(userInfo);
+        if (cnt == 0) {
+            throw new ConditionException("更新userInfo失败，服务端错误");
+        }
+    }
+
+
 }

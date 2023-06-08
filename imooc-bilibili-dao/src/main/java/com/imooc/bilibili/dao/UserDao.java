@@ -24,4 +24,6 @@ public interface UserDao {
     UserInfo getUserInfoByUserId(Long userId);
 
     Integer updateUserByPrimaryKeySelective(User user);
+
+    Integer updateUserInfo(UserInfo userInfo);
 }

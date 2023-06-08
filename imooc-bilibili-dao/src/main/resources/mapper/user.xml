@@ -69,5 +69,30 @@
         where id = #{id}
     </update>
 
+    <update id="updateUserInfo" parameterType="com.imooc.bilibili.domain.UserInfo">
+        update t_user_info
+        <set>
+            <if test="nick != null and nick != '' ">
+                nick = #{nick},
+            </if>
+            <if test="avatar != null">
+                avatar = #{avatar},
+            </if>
+            <if test="sign != null">
+                sign = #{sign},
+            </if>
+            <if test="birth != null and birth != '' ">
+                birth = #{birth},
+            </if>
+            <if test="gender != null and gender != '' ">
+                gender = #{gender},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime},
+            </if>
+        </set>
+        where userId = #{userId}
+    </update>
+
 
 </mapper>
