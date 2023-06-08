@@ -50,5 +50,24 @@
 
     </select>
 
+    <update id="updateUserByPrimaryKeySelective" parameterType="com.imooc.bilibili.domain.User">
+        update t_user
+        <set>
+            <if test="phone != null and phone != '' ">
+                phone = #{phone},
+            </if>
+            <if test="email != null and email != '' ">
+                email = #{email},
+            </if>
+            <if test="password != null and password != '' ">
+                password = #{password},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
 
 </mapper>

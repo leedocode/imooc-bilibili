@@ -89,6 +89,24 @@ public class UserService {
         }
 
         return TokenUtil.generateToken(dbUser.getId());
+    }
 
+    public Integer updateUser(User user) throws Exception {
+        Long id = user.getId();
+        User dbUser = userDao.getUserById(id);
+        if (dbUser == null) {
+            throw new ConditionException("用户不存在");
+        }
+        if (!StringUtils.isNullOrEmpty(user.getPassword())) {
+            String rawPassword = RSAUtil.decrypt(user.getPassword());
+            String md5Password = MD5Util.sign(rawPassword, dbUser.getSalt(), "UTF-8");
+            user.setPassword(md5Password);
+        }
+        user.setUpdateTime(new Date());
+        Integer cnt = userDao.updateUserByPrimaryKeySelective(user);
+        if (cnt < 0) {
+            throw new ConditionException("更新失败，服务端错误");
+        }
+        return cnt;
     }
 }

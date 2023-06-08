@@ -6,10 +6,7 @@ import com.imooc.bilibili.domain.User;
 import com.imooc.bilibili.service.UserService;
 import com.imooc.bilibili.service.util.RSAUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.interfaces.RSAPublicKey;
 
@@ -50,5 +47,15 @@ public class UserApi {
         String token = userService.login(user);
         return new JsonResponse<>(token);
     }
+
+    @PutMapping("/users")
+    public JsonResponse<String> updateUser(@RequestBody User user) throws Exception {
+        Long userId = userSupport.getCurrentUserId();
+        user.setId(userId);
+        userService.updateUser(user);
+        return JsonResponse.success();
+    }
+
+
 
 }
