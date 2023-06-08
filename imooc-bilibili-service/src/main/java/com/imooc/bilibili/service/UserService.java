@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 描述: TODO
@@ -123,4 +125,7 @@ public class UserService {
     }
 
 
+    public List<UserInfo> getUserInfosByUserIdS(Set<Long> followingIdSet) {
+        return userDao.getUserInfoByUserIds(followingIdSet);
+    }
 }

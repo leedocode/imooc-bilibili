@@ -24,6 +24,13 @@
                 #{followingId},
                 #{createTime}
             )
-
     </insert>
+    <select id="getUserFollowings" parameterType="java.lang.Long" resultType="com.imooc.bilibili.domain.UserFollowing">
+        select
+            *
+        from
+            t_user_following
+        where
+            userId = #{userId}
+    </select>
 </mapper>

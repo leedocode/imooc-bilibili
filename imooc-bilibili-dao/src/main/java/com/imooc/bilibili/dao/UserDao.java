@@ -5,6 +5,9 @@ import com.imooc.bilibili.domain.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * 描述: TODO
  */
@@ -26,4 +29,6 @@ public interface UserDao {
     Integer updateUserByPrimaryKeySelective(User user);
 
     Integer updateUserInfo(UserInfo userInfo);
+
+    List<UserInfo> getUserInfoByUserIds(Set<Long> followingIdSet);
 }

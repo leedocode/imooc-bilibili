@@ -3,6 +3,7 @@ package com.imooc.bilibili.domain;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 描述: TODO
@@ -21,5 +22,7 @@ public class FollowingGroup {
     private Date createTime;
 
     private Date updateTime;
+
+    private List<UserInfo> followingUserInfoList;
 
 }

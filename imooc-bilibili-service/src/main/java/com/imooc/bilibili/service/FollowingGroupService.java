@@ -5,6 +5,8 @@ import com.imooc.bilibili.domain.FollowingGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 描述: TODO
  */
@@ -20,5 +22,9 @@ public class FollowingGroupService {
 
     public FollowingGroup getById(Long id) {
         return followingGroupDao.getById(id);
+    }
+
+    public List<FollowingGroup> getByUserId(Long userId) {
+        return followingGroupDao.getByUserId(userId);
     }
 }

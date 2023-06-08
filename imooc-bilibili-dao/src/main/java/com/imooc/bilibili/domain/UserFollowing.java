@@ -20,4 +20,6 @@ public class UserFollowing {
 
     private Date createTime;
 
+    private UserInfo userInfo;
+
 }

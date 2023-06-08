@@ -5,13 +5,18 @@ import com.imooc.bilibili.dao.UserFollowingDao;
 import com.imooc.bilibili.domain.FollowingGroup;
 import com.imooc.bilibili.domain.User;
 import com.imooc.bilibili.domain.UserFollowing;
+import com.imooc.bilibili.domain.UserInfo;
 import com.imooc.bilibili.domain.constant.UserConstant;
 import com.imooc.bilibili.service.exception.ConditionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 描述: TODO
@@ -50,5 +55,44 @@ public class UserFollowingService {
         userFollowingDao.deleteUserFollowing(user.getId(), userFollowing.getId());
         userFollowing.setCreateTime(new Date());
         userFollowingDao.addUserFollowing(userFollowing);
+    }
+
+    public List<FollowingGroup> getUserFollowings(Long userId) {
+        List<UserFollowing> userFollowingList = userFollowingDao.getUserFollowings(userId);
+        Set<Long> followingIdSet = userFollowingList.stream()
+                .map(UserFollowing::getFollowingId)
+                .collect(Collectors.toSet());
+
+        List<UserInfo> userInfoList = new ArrayList<>();
+        if (followingIdSet.size() > 0) {
+            userInfoList = userService.getUserInfosByUserIdS(followingIdSet);
+        }
+
+        for (UserFollowing userFollowing : userFollowingList) {
+            for (UserInfo userInfo : userInfoList) {
+                if (userFollowing.getFollowingId().equals(userInfo.getUserId())) {
+                    userFollowing.setUserInfo(userInfo);
+                }
+            }
+        }
+
+        List<FollowingGroup> groupList = followingGroupService.getByUserId(userId);
+        FollowingGroup allGroup = new FollowingGroup();
+        allGroup.setName(UserConstant.USER_FOLLOWING_GROUP_ALL_NAME);
+        allGroup.setFollowingUserInfoList(userInfoList);
+        List<FollowingGroup> result = new ArrayList<>();
+        result.add(allGroup);
+
+        for (FollowingGroup group : groupList) {
+            List<UserInfo> infoList = new ArrayList<>();
+            for (UserFollowing userFollowing : userFollowingList) {
+                if (group.getId().equals(userFollowing.getGroupId())) {
+                    infoList.add(userFollowing.getUserInfo());
+                }
+            }
+            group.setFollowingUserInfoList(infoList);
+            result.add(group);
+        }
+        return result;
     }
 }
