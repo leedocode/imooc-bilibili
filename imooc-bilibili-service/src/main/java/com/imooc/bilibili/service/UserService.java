@@ -128,4 +128,8 @@ public class UserService {
     public List<UserInfo> getUserInfosByUserIdS(Set<Long> followingIdSet) {
         return userDao.getUserInfoByUserIds(followingIdSet);
     }
+
+    public UserInfo getUserInfoByUserId(Long userId) {
+        return userDao.getUserInfoByUserId(userId);
+    }
 }

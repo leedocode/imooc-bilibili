@@ -26,6 +26,8 @@ public class UserInfo {
 
     private String birth;
 
+    private Boolean followed;
+
     private Date CreateTime;
 
     private Date updateTime;

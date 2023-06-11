@@ -100,9 +100,9 @@
         from
             t_user_info
         <where>
-            <if test="userIdList != null and userIdList.size > 0">
+            <if test="userIdSet != null and userIdSet.size > 0">
                 userId in
-                <foreach collection="userIdList" item="userId" index="index" open="(" close=")" separator=",">
+                <foreach collection="userIdSet" item="userId" index="index" open="(" close=")" separator=",">
                     #{userId}
                 </foreach>
             </if>

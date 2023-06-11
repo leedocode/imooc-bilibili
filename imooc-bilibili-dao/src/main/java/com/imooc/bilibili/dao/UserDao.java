@@ -30,5 +30,5 @@ public interface UserDao {
 
     Integer updateUserInfo(UserInfo userInfo);
 
-    List<UserInfo> getUserInfoByUserIds(Set<Long> followingIdSet);
+    List<UserInfo> getUserInfoByUserIds(Set<Long> userIdSet);
 }

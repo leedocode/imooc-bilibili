@@ -3,13 +3,14 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.imooc.bilibili.dao.FollowingGroupDao">
-    <select id="getByType" parameterType="java.lang.String" resultType="com.imooc.bilibili.domain.FollowingGroup">
+    <select id="getByType" parameterType="java.lang.String" resultType="com.imooc.bilibili.domain.FollowingGroup" >
         select
             *
         from
             t_following_group
         where
-            'type' = #{type}
+            `type` = #{type}
+
     </select>
 
     <select id="getById" parameterType="java.lang.Long" resultType="com.imooc.bilibili.domain.FollowingGroup">
@@ -27,7 +28,43 @@
         from
             t_following_group
         where
-            userId = #{userId} or 'type' in ('0', '1', '2')
+            <!-- 'type' 和`type` 不一样 注意列字段要用反勾号`` 单引号是字符串''-->
+            userId = #{userId} or `type` in ('0', '1', '2')
+
+    </select>
+
+    <select id="getByName" parameterType="java.lang.String" resultType="com.imooc.bilibili.domain.FollowingGroup">
+        select
+            *
+        from
+            t_following_group
+        where
+            name = #{name}
+    </select>
+
+    <insert id="addFollowingGroup" parameterType="com.imooc.bilibili.domain.FollowingGroup" useGeneratedKeys="true" keyProperty="id">
+        insert into t_following_group
+            (
+                userId,
+                `name`,
+                `type`,
+                createtime
+            ) VALUES
+            (
+                #{userId},
+                #{name},
+                #{type},
+                #{createTime}
+            )
+    </insert>
+
+    <select id="getUserFollowingGroups" parameterType="java.lang.Long" resultType="com.imooc.bilibili.domain.FollowingGroup">
+        select
+            *
+        from
+            t_following_group
+        where
+            userId = #{userId}
     </select>
 
 

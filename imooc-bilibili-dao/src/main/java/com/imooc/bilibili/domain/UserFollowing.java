@@ -22,4 +22,5 @@ public class UserFollowing {
 
     private UserInfo userInfo;
 
+
 }
