@@ -1,6 +1,8 @@
 package com.imooc.bilibili.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.imooc.bilibili.dao.UserDao;
+import com.imooc.bilibili.domain.PageResult;
 import com.imooc.bilibili.domain.User;
 import com.imooc.bilibili.domain.UserInfo;
 import com.imooc.bilibili.domain.constant.UserConstant;
@@ -12,6 +14,7 @@ import com.mysql.cj.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -54,7 +57,11 @@ public class UserService {
         //添加用户信息
         UserInfo userInfo = new UserInfo();
         userInfo.setUserId(user.getId());
-        userInfo.setNick(UserConstant.DEFAULT_NICK);
+        if (user.getNickName() != null && !user.getNickName().equals("")) {
+            userInfo.setNick(user.getNickName());
+        } else {
+            userInfo.setNick(UserConstant.DEFAULT_NICK);
+        }
         userInfo.setBirth(UserConstant.DEFAULT_BIRTH);
         userInfo.setGender(UserConstant.GENDER_MALE);
         userInfo.setCreateTime(now);
@@ -131,5 +138,18 @@ public class UserService {
 
     public UserInfo getUserInfoByUserId(Long userId) {
         return userDao.getUserInfoByUserId(userId);
+    }
+
+    public PageResult<UserInfo> pageListUserInfos(JSONObject params) {
+        Integer no = (Integer) params.get("no");
+        Integer size =  (Integer) params.get("size");
+        params.put("start", (no - 1) * size);
+        params.put("limit", size);
+        Integer total = userDao.pageCountUserInfos(params);
+        List<UserInfo> list = new ArrayList<>();
+        if (total > 0) {
+            list = userDao.pageListUserInfos(params);
+        }
+        return new PageResult<>(total, list);
     }
 }

@@ -13,6 +13,7 @@ public class User {
 
     private Long id;
 
+    private String nickName;
     private String phone;
 
     private String email;

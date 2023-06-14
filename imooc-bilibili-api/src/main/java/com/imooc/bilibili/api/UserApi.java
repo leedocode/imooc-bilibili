@@ -1,15 +1,16 @@
 package com.imooc.bilibili.api;
 
+import com.alibaba.fastjson.JSONObject;
 import com.imooc.bilibili.api.support.UserSupport;
-import com.imooc.bilibili.domain.JsonResponse;
-import com.imooc.bilibili.domain.User;
-import com.imooc.bilibili.domain.UserInfo;
+import com.imooc.bilibili.domain.*;
+import com.imooc.bilibili.service.UserFollowingService;
 import com.imooc.bilibili.service.UserService;
 import com.imooc.bilibili.service.util.RSAUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.interfaces.RSAPublicKey;
+import java.util.List;
 
 /**
  * 描述: TODO
@@ -23,6 +24,10 @@ public class UserApi {
 
     @Autowired
     private UserSupport userSupport;
+
+
+    @Autowired
+    private UserFollowingService userFollowingService;
 
     @GetMapping("/users")
     public JsonResponse<User> getUserInfo() {
@@ -63,6 +68,22 @@ public class UserApi {
         userInfo.setUserId(userId);
         userService.updateUserInfo(userInfo);
         return JsonResponse.success();
+    }
+
+    @GetMapping("/user-infos")
+    public JsonResponse<PageResult<UserInfo>> pageListUserInfos(@RequestParam Integer no, @RequestParam Integer size, String nick) {
+        Long userId = userSupport.getCurrentUserId();
+        JSONObject params = new JSONObject();
+        params.put("no", no);
+        params.put("size", size);
+        params.put("userId", userId);
+        params.put("nick", nick);
+        PageResult<UserInfo> userInfoPageResult = userService.pageListUserInfos(params);
+        if (userInfoPageResult.getTotal() > 0) {
+            List<UserInfo> checkedUserInfoList = userFollowingService.checkFollowingStatus(userInfoPageResult.getList(), userId);
+            userInfoPageResult.setList(checkedUserInfoList);
+        }
+        return new JsonResponse<>(userInfoPageResult);
     }
 
 

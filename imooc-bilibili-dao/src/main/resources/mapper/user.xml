@@ -109,5 +109,31 @@
         </where>
     </select>
 
+    <select id="pageCountUserInfos" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select
+            count(1)
+        from
+            t_user_info
+        <where>
+            <if test="nick != null and nick != '' ">
+                nick like '%${nick}%'
+            </if>
+        </where>
+    </select>
+
+    <select id="pageListUserInfos" parameterType="java.util.Map" resultType="com.imooc.bilibili.domain.UserInfo">
+        select
+            *
+        from
+            t_user_info
+        <where>
+            <if test="nick != null and nick != '' ">
+                nick like '%${nick}%'
+            </if>
+        </where>
+        order by id desc
+        limit #{start},#{size}
+    </select>
+
 
 </mapper>

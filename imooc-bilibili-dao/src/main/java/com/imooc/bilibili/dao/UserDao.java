@@ -1,11 +1,13 @@
 package com.imooc.bilibili.dao;
 
+import com.alibaba.fastjson.JSONObject;
 import com.imooc.bilibili.domain.User;
 import com.imooc.bilibili.domain.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -31,4 +33,8 @@ public interface UserDao {
     Integer updateUserInfo(UserInfo userInfo);
 
     List<UserInfo> getUserInfoByUserIds(Set<Long> userIdSet);
+
+    Integer pageCountUserInfos(Map<String,Object> params);
+
+    List<UserInfo> pageListUserInfos(Map<String,Object> params);
 }

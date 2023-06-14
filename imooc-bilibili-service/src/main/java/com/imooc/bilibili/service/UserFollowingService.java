@@ -51,6 +51,9 @@ public class UserFollowingService {
         userFollowingDao.deleteUserFollowing(userFollowing.getUserId(), followingId);
         userFollowing.setCreateTime(new Date());
         userFollowingDao.addUserFollowing(userFollowing);
+//        UserInfo followingUserInfo = userService.getUserInfoByUserId(followingId);
+//        followingUserInfo.setFollowed(true);
+//        userFollowing.setUserInfo(followingUserInfo);
     }
 
     //1 获取关注的用户列表
@@ -67,6 +70,11 @@ public class UserFollowingService {
         if (followingIdSet.size() > 0) {
             userInfoList = userService.getUserInfosByUserIdS(followingIdSet);
         }
+//      测试如果把关注分组里的followed字段改了会是什么结果，前端这里是写死的，不管是什么值，在关注分组里都是已关注状态，如果未关注的话就不会出现在分组中
+        //其实也能理解，不是你关注的人，自然不会出现在你的关注分组中，所以这里也无所谓要不要加followed=true这个操作
+//        for (UserInfo u : userInfoList) {
+//            u.setFollowed(false);
+//        }
         //设置userInfo到对应的用户关注字段中
         for (UserFollowing userFollowing : userFollowingList) {
             for (UserInfo userInfo : userInfoList) {
@@ -143,5 +151,18 @@ public class UserFollowingService {
 
     public List<FollowingGroup> getUserFollowingGroups(Long userId) {
         return followingGroupService.getUserFollowingGroups(userId);
+    }
+
+    public List<UserInfo> checkFollowingStatus(List<UserInfo> list, Long userId) {
+        List<UserFollowing> userFollowings = userFollowingDao.getUserFollowings(userId);
+        for (UserInfo userInfo : list) {
+            userInfo.setFollowed(false);
+            for (UserFollowing userFollowing : userFollowings) {
+                if (userFollowing.getFollowingId().equals(userInfo.getUserId())) {
+                    userInfo.setFollowed(true);
+                }
+            }
+        }
+        return list;
     }
 }

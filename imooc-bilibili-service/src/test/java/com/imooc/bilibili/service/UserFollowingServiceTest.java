@@ -1,6 +1,7 @@
 package com.imooc.bilibili.service;
 
 import com.imooc.bilibili.dao.FollowingGroupDao;
+import com.imooc.bilibili.dao.UserDao;
 import com.imooc.bilibili.domain.FollowingGroup;
 import com.imooc.bilibili.domain.UserFollowing;
 import com.imooc.bilibili.service.UserFollowingService;
@@ -14,7 +15,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -34,11 +37,14 @@ public class UserFollowingServiceTest {
     @Autowired
     FollowingGroupDao followingGroupDao;
 
+    @Autowired
+    UserDao userDao;
+
     @Test
     public void addUserFollowing() {
         UserFollowing userFollowing = new UserFollowing();
-        userFollowing.setUserId(18L);
-        userFollowing.setFollowingId(17L);
+        userFollowing.setUserId(17L);
+        userFollowing.setFollowingId(18L);
         userFollowing.setUserInfo(userService.getUserInfoByUserId(17L));
         userFollowingService.addUserFollowing(userFollowing);
     }
@@ -83,5 +89,13 @@ public class UserFollowingServiceTest {
         for (FollowingGroup group : userFollowingGroups) {
             log.info("group = {}", group);
         }
+    }
+
+    @Test
+    public void testLike() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("nick", "小");
+        Integer integer = userDao.pageCountUserInfos(map);
+        System.out.println(integer);
     }
 }
