@@ -3,6 +3,7 @@ package com.imooc.bilibili.domain;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Stack;
 
 /**
  * 描述: TODO
@@ -28,3 +29,4 @@ public class User {
 
     private UserInfo userInfo;
 }
+

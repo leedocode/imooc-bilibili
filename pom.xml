@@ -80,6 +80,20 @@
             <version>2.2.2.RELEASE</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+            <version>2.5.1</version>
+        </dependency>
+
+        <!--  解决启动项目时报错io.netty.resolver.dns.DnsServerAddressStreamProviders,仅为解决此问题引入的依赖   -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver-dns-native-macos</artifactId>
+            <version>4.1.75.Final</version> <!--版本号自己切-->
+            <classifier>osx-aarch_64</classifier>
+        </dependency>
+
     </dependencies>
     <modules>
         <module>imooc-bilibili-api</module>
