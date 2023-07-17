@@ -21,7 +21,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-
+// 测试时需要加上对应的配置项到配置文件中
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

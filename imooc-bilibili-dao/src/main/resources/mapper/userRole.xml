@@ -14,4 +14,18 @@
         where
             tur.userId = #{userId}
     </select>
+
+    <insert id="addUserRole" parameterType="com.imooc.bilibili.domain.auth.UserRole" useGeneratedKeys="true" keyProperty="id">
+        insert into t_user_role (
+            userid,
+            roleid,
+            createtime
+        ) VALUES (
+            #{userId},
+            #{roleId},
+            #{createTime}
+        )
+    </insert>
+
+
 </mapper>
