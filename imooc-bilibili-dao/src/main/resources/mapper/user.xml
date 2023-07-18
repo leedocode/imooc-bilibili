@@ -135,5 +135,23 @@
         limit #{start},#{size}
     </select>
 
+    <delete id="deleteRefreshToken">
+        delete from
+                t_refresh_token
+        where refreshToken = #{refreshToken}
+    </delete>
+
+    <insert id="addRefreshToken">
+        insert into t_refresh_token (
+            refreshToken,
+            userId,
+            createTime
+        ) values (
+            #{refreshToken},
+            #{userId},
+            #{createTime}
+        )
+    </insert>
+
 
 </mapper>

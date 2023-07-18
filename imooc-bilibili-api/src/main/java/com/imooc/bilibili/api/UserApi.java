@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.interfaces.RSAPublicKey;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 描述: TODO
@@ -86,6 +87,10 @@ public class UserApi {
         return new JsonResponse<>(userInfoPageResult);
     }
 
-
+    @PostMapping("/user_dts")
+    public JsonResponse<Map<String, Object>> loginForDts(@RequestBody User user) throws Exception {
+        Map<String, Object> map = userService.loginForDts(user);
+        return new JsonResponse<>(map);
+    }
 
 }
