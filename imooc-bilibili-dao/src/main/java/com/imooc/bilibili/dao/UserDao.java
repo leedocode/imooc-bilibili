@@ -1,6 +1,7 @@
 package com.imooc.bilibili.dao;
 
 import com.alibaba.fastjson.JSONObject;
+import com.imooc.bilibili.domain.RefreshTokenDetail;
 import com.imooc.bilibili.domain.User;
 import com.imooc.bilibili.domain.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
@@ -43,4 +44,6 @@ public interface UserDao {
     Integer deleteRefreshToken(@Param("refreshToken") String refreshToken, @Param("userId") Long userId);
 
     Integer addRefreshToken(@Param("refreshToken") String refreshToken, @Param("userId") Long userId, @Param("createTime") Date createTime);
+
+    RefreshTokenDetail getRefreshTokenDetail(String refreshToken);
 }

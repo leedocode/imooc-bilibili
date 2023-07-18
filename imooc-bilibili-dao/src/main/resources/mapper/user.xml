@@ -153,5 +153,14 @@
         )
     </insert>
 
+    <select id="getRefreshTokenDetail" parameterType="java.lang.String" resultType="com.imooc.bilibili.domain.RefreshTokenDetail">
+        select
+            *
+        from
+            t_refresh_token
+        where
+            refreshToken = #{refreshToken}
+    </select>
+
 
 </mapper>
