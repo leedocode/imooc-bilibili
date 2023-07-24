@@ -96,7 +96,7 @@ public class UserApi {
 
     @DeleteMapping("/refresh-tokens")
     public JsonResponse<String> logout(HttpServletRequest request) {
-         String refreshToken = request.getHeader("refreshToken");
+        String refreshToken = request.getHeader("refreshToken");
         Long userId = userSupport.getCurrentUserId();
         userService.logout(refreshToken, userId);
         return JsonResponse.success();

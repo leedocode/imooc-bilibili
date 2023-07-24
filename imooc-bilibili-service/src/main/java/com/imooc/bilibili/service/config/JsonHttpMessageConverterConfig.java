@@ -4,10 +4,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.ArrayList;
 
@@ -17,6 +20,9 @@ import java.util.ArrayList;
 
 @Configuration
 public class JsonHttpMessageConverterConfig {
+
+    @Autowired
+    private static RedisTemplate<String, String> redisTemplate;
 
     //Bean注解用在方法上，让被注解的方法产生一个Bean交给spring容器进行管理
     @Bean
@@ -38,12 +44,13 @@ public class JsonHttpMessageConverterConfig {
     }
 
     public static void main(String[] args) {
-        ArrayList<Object> list = new ArrayList<>();
-        Object o = new Object();
-        list.add(o);
-        list.add(o);
-
-        System.out.println(list.size());
-        System.out.println(JSONObject.toJSONString(list, SerializerFeature.DisableCircularReferenceDetect));
+//        ArrayList<Object> list = new ArrayList<>();
+//        Object o = new Object();
+//        list.add(o);
+//        list.add(o);
+//
+//        System.out.println(list.size());
+//        System.out.println(JSONObject.toJSONString(list, SerializerFeature.DisableCircularReferenceDetect));
+        //redisTemplate.opsForValue().set("liwejie0722", "test");
     }
 }
