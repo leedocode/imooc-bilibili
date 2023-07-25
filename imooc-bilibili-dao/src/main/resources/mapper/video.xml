@@ -41,4 +41,30 @@
             )
         </foreach>
     </insert>
+
+    <select id="pageCountVideos" parameterType="map" resultType="java.lang.Integer">
+        select
+            COUNT(1)
+        from
+            t_video
+        <where>
+            <if test="area != null and area != '' ">
+                area = #{area}
+            </if>
+        </where>
+    </select>
+
+    <select id="pageListVideos" parameterType="map" resultType="com.imooc.bilibili.domain.Video">
+        select
+            *
+        from
+            t_video
+        <where>
+            <if test="area != null and area != '' ">
+                area = #{area}
+            </if>
+        </where>
+        order by id desc
+        limit #{start}, #{limit}
+    </select>
 </mapper>

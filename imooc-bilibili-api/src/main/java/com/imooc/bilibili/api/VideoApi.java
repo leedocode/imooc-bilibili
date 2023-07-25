@@ -2,6 +2,7 @@ package com.imooc.bilibili.api;
 
 import com.imooc.bilibili.api.support.UserSupport;
 import com.imooc.bilibili.domain.JsonResponse;
+import com.imooc.bilibili.domain.PageResult;
 import com.imooc.bilibili.domain.Video;
 import com.imooc.bilibili.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,12 @@ public class VideoApi {
         video.setUserId(userId);
         videoService.addVideos(video);
         return JsonResponse.success();
+    }
+
+    @GetMapping("/videos")
+    public JsonResponse<PageResult<Video>> pageListVideos(Integer size, Integer no, String area) {
+        PageResult<Video> result = videoService.pageListVideos(size, no, area);
+        return new JsonResponse<>(result);
     }
 
 }
