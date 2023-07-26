@@ -1,5 +1,6 @@
 package com.imooc.bilibili.service.util;
 
+import com.github.tobato.fastdfs.domain.fdfs.FileInfo;
 import com.github.tobato.fastdfs.domain.fdfs.MetaData;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.service.AppendFileStorageClient;
@@ -7,15 +8,15 @@ import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.imooc.bilibili.service.exception.ConditionException;
 import io.netty.util.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 描述: FastDFS 工具类
@@ -42,6 +43,9 @@ public class FastDFSUtil {
     public static final String UPLOAD_NO_KEY = "upload-no-key";
 
     public static final int SLICE_SIZE = 1024 * 1024 * 2;
+
+    @Value("${fdfs.http.storage-addr}")
+    private String httpStorageAddr;
 
     public String getFileType(MultipartFile file) {
         if (file == null) {
@@ -165,16 +169,41 @@ public class FastDFSUtil {
         fastFileStorageClient.deleteFile(filePath);
     }
 
-//    public static void main(String[] args) throws IOException {
-//        File file = new File("tmpfile/1.txt");
-//        FileOutputStream fos = new FileOutputStream(file);
-//        byte[] bytes = new byte[20];
-//        for (int i = 0; i < bytes.length; i++) {
-//            bytes[i] = 'c';
-//        }
-//
-//        fos.write(bytes, 0 , 20);
-//        System.out.println(file.getAbsolutePath());
-//    }
+    public void viewVideoOnlineBySlices(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        String path) throws Exception {
+        FileInfo fileInfo = fastFileStorageClient.queryFileInfo(DEFAULT_GROUP, path);
+        long totalFileSize = fileInfo.getFileSize();
+        String url = httpStorageAddr + path;
+        Enumeration<String> headerNames = request.getHeaderNames();
+        Map<String, Object> headers = new HashMap<>();
+        while (headerNames.hasMoreElements()) {
+            String header = headerNames.nextElement();
+            headers.put(header, request.getHeader(header));
+        }
+        String rangeStr = request.getHeader("range");
+        String[] range;
+        if (StringUtil.isNullOrEmpty(rangeStr)) {
+            rangeStr = "byte=0-" + (totalFileSize - 1);
+        }
+        range = rangeStr.split("byte= | -");
+        long begin = 0;
+        if (range.length >= 2) {
+            begin = Long.parseLong(range[1]);
+        }
+        long end = totalFileSize - 1;
+        if (range.length >= 3) {
+            end = Long.parseLong(range[2]);
+        }
+        long len = end - begin + 1;
+        String contentRange = "bytes" + begin + "-" + end + "/" + totalFileSize;
+        response.setHeader("Content-Range", contentRange);
+        response.setHeader("Accept-Ranges", "bytes");
+        response.setHeader("Content-Type", "video/mp4");
+        response.setContentLength((int)len);
+        response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+        //将对应数据通过输出流写入响应传给前端，这里就是视频会响应给前端
+        HttpUtil.get(url, headers, response);
+    }
 
 }

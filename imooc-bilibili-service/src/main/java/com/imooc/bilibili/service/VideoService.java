@@ -5,11 +5,14 @@ import com.imooc.bilibili.domain.PageResult;
 import com.imooc.bilibili.domain.Video;
 import com.imooc.bilibili.domain.VideoTag;
 import com.imooc.bilibili.service.exception.ConditionException;
+import com.imooc.bilibili.service.util.FastDFSUtil;
 import io.netty.util.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
@@ -20,6 +23,9 @@ public class VideoService {
 
     @Autowired
     VideoDao videoDao;
+
+    @Autowired
+    FastDFSUtil fastDFSUtil;
 
     @Transactional
     public void addVideos(Video video) {
@@ -52,5 +58,9 @@ public class VideoService {
         }
 
         return new PageResult<Video>(total, videoList);
+    }
+
+    public void viewVideoOnlineBySlices(HttpServletRequest request, HttpServletResponse response, String url) throws Exception {
+        fastDFSUtil.viewVideoOnlineBySlices(request, response, url);
     }
 }

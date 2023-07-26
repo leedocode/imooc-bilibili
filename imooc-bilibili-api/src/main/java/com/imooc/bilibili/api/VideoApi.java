@@ -8,6 +8,9 @@ import com.imooc.bilibili.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * 描述: TODO
  */
@@ -33,6 +36,11 @@ public class VideoApi {
     public JsonResponse<PageResult<Video>> pageListVideos(Integer size, Integer no, String area) {
         PageResult<Video> result = videoService.pageListVideos(size, no, area);
         return new JsonResponse<>(result);
+    }
+
+    @GetMapping("/video-slices")
+    public void viewVideoOnlineBySlices(HttpServletRequest request, HttpServletResponse response, String url) throws Exception {
+        videoService.viewVideoOnlineBySlices(request, response, url);
     }
 
 }
