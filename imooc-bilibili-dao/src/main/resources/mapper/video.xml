@@ -111,6 +111,55 @@
         from
             t_video_like
         where
+            videoId = #{videoId}
+    </select>
+    
+    <select id="addVideoCollection" parameterType="com.imooc.bilibili.domain.VideoCollection" resultType="int">
+        insert into t_video_collection (
+            videoId,
+            userId,
+            groupId,
+            createTime
+        ) values (
+            #{videoId},
+            #{userId},
+            #{groupId},
+            #{createTime}
+        );
+    </select>
+
+    <delete id="deleteVideoCollection" parameterType="com.imooc.bilibili.domain.VideoCollection">
+        delete from
+            t_video_collection
+        where
+            videoId = #{videoId}
+            and userId = #{userId}
+    </delete>
+
+    <select id="getVideoById" parameterType="long" resultType="com.imooc.bilibili.domain.Video">
+        select
+            *
+        from
+            t_video
+        where
+            id = #{id}
+    </select>
+
+    <select id="getVideoCollections" resultType="long">
+        select
+            count(1)
+        from
+            t_video_collection
+        where
+            videoId = #{videoId}
+    </select>
+
+    <select id="getVideoCollectionByVideoIdAndUserId" resultType="com.imooc.bilibili.domain.VideoCollection">
+        select
+            *
+        from
+            t_video_collection
+        where
             videoId = #{videoId} and userId = #{userId}
     </select>
 </mapper>

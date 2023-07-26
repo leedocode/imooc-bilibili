@@ -1,10 +1,7 @@
 package com.imooc.bilibili.service;
 
 import com.imooc.bilibili.dao.VideoDao;
-import com.imooc.bilibili.domain.PageResult;
-import com.imooc.bilibili.domain.Video;
-import com.imooc.bilibili.domain.VideoLike;
-import com.imooc.bilibili.domain.VideoTag;
+import com.imooc.bilibili.domain.*;
 import com.imooc.bilibili.service.exception.ConditionException;
 import com.imooc.bilibili.service.util.FastDFSUtil;
 import io.netty.util.internal.StringUtil;
@@ -92,6 +89,38 @@ public class VideoService {
         Map<String, Object> result = new HashMap<>();
         result.put("count", count);
         result.put("like", like);
+        return result;
+    }
+
+    @Transactional
+    public void addVideoCollection(VideoCollection videoCollection, Long userId) {
+        Long videoId = videoCollection.getVideoId();
+        Long groupId = videoCollection.getGroupId();
+        if (videoId == null || groupId == null) {
+            throw new ConditionException("参数异常");
+        }
+        Video video = videoDao.getVideoById(videoId);
+        if (video == null) {
+            throw new ConditionException("非法视频！");
+        }
+        //先删除原有的收藏视频
+        deleteVideoCollection(videoId, userId);
+        videoCollection.setUserId(userId);
+        videoCollection.setCreateTime(new Date());
+        videoDao.addVideoCollection(videoCollection);
+    }
+
+    public void deleteVideoCollection(Long videoId, Long userId) {
+        videoDao.deleteVideoCollection(videoId, userId);
+    }
+
+    public Map<String, Object> getVideoCollections(Long videoId, Long userId) {
+        Long count = videoDao.getVideoCollections(videoId, userId);
+        VideoCollection videoCollection = videoDao.getVideoCollectionByVideoIdAndUserId(videoId, userId);
+        boolean isCollected = videoCollection != null;
+        Map<String, Object> result = new HashMap<>();
+        result.put("count", count);
+        result.put("isCollected", isCollected);
         return result;
     }
 }
