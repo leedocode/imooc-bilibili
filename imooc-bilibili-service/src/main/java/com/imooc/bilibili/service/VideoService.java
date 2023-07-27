@@ -25,6 +25,9 @@ public class VideoService {
     @Autowired
     FastDFSUtil fastDFSUtil;
 
+    @Autowired
+    UserCoinService userCoinService;
+
     @Transactional
     public void addVideos(Video video) {
         Date now = new Date();
@@ -121,6 +124,48 @@ public class VideoService {
         Map<String, Object> result = new HashMap<>();
         result.put("count", count);
         result.put("isCollected", isCollected);
+        return result;
+    }
+
+    @Transactional
+    public void addVideoCoins(VideoCoin videoCoin, Long userId) {
+        Long videoId = videoCoin.getVideoId();
+        Integer amount = videoCoin.getAmount();
+        if (videoId == null) {
+            throw new ConditionException("非法视频ID");
+        }
+        if (amount == null) {
+            throw new ConditionException("非法投币数量");
+        }
+        Integer userCoinAmount = userCoinService.getUserCoinAmount(userId);
+        userCoinAmount = userCoinAmount == null ? 0 : userCoinAmount;
+        if (userCoinAmount < amount) {
+            throw new ConditionException("用户硬币数量不足");
+        }
+        VideoCoin dbVideoCoin = videoDao.getVideoCoinByVideoIdAndUserId(videoId, userId);
+        if (dbVideoCoin == null) {
+            dbVideoCoin = new VideoCoin();
+            dbVideoCoin.setUserId(userId);
+            dbVideoCoin.setVideoId(videoId);
+            dbVideoCoin.setAmount(amount);
+            dbVideoCoin.setCreateTime(new Date());
+            videoDao.addVideoCoin(dbVideoCoin);
+        } else {
+            dbVideoCoin.setAmount(dbVideoCoin.getAmount() + userCoinAmount);
+            dbVideoCoin.setUserId(userId);
+            dbVideoCoin.setUpdateTime(new Date());
+            videoDao.updateVideoCoin(dbVideoCoin);
+        }
+        userCoinService.updateVideoCoin(userId, (userCoinAmount - amount));
+    }
+
+    public Map<String, Object> getVideoCoins(Long videoId, Long userId) {
+        Long count = videoDao.getVideoCoins(videoId);
+        VideoCoin videoCoin = videoDao.getVideoCoinByVideoIdAndUserId(videoId, userId);
+        boolean isCoined = videoCoin != null;
+        Map<String, Object> result = new HashMap<>();
+        result.put("count", count);
+        result.put("isCoined", isCoined);
         return result;
     }
 }

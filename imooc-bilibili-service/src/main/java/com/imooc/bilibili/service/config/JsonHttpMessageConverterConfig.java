@@ -20,10 +20,6 @@ import java.util.ArrayList;
 
 @Configuration
 public class JsonHttpMessageConverterConfig {
-
-    @Autowired
-    private static RedisTemplate<String, String> redisTemplate;
-
     //Bean注解用在方法上，让被注解的方法产生一个Bean交给spring容器进行管理
     @Bean
     @Primary
@@ -40,17 +36,7 @@ public class JsonHttpMessageConverterConfig {
                 SerializerFeature.DisableCircularReferenceDetect
         );
         fastConverter.setFastJsonConfig(fastJsonConfig);
-        return new HttpMessageConverters(fastConverter);
-    }
 
-    public static void main(String[] args) {
-//        ArrayList<Object> list = new ArrayList<>();
-//        Object o = new Object();
-//        list.add(o);
-//        list.add(o);
-//
-//        System.out.println(list.size());
-//        System.out.println(JSONObject.toJSONString(list, SerializerFeature.DisableCircularReferenceDetect));
-        //redisTemplate.opsForValue().set("liwejie0722", "test");
+        return new HttpMessageConverters(fastConverter);
     }
 }
