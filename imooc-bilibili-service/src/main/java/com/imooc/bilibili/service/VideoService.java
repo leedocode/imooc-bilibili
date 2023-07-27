@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * 描述: TODO
@@ -167,5 +169,62 @@ public class VideoService {
         result.put("count", count);
         result.put("isCoined", isCoined);
         return result;
+    }
+
+    public void addVideoComment(VideoComment videoComment, Long userId) {
+        Long videoId = videoComment.getVideoId();
+        if (videoId == null) {
+            throw new ConditionException("参数异常");
+        }
+        Video video = videoDao.getVideoById(videoId);
+        if (video == null) {
+            throw new ConditionException("非法视频");
+        }
+        videoComment.setUserId(userId);
+        videoComment.setCreateTime(new Date());
+        videoDao.addVideoComment(videoComment);
+    }
+
+    public PageResult<VideoComment> pageListVideoComments(Long size, Long no, Long videoId) {
+        Video video = videoDao.getVideoById(videoId);
+        if (video == null) {
+            throw new ConditionException("非法视频");
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("start", (no - 1) * size);
+        params.put("limit", size);
+        params.put("videoId", videoId);
+        Integer total = videoDao.pageCountVideoComments(params);
+        List<VideoComment> list = new ArrayList<>();
+        if (total > 0) {
+            //查询一级评论
+            list = videoDao.pageListVideoComments(params);
+            //查询二级评论
+            List<Long> parentIdList = list.stream().map(VideoComment::getId).collect(Collectors.toList());
+            List<VideoComment> childCommentList = videoDao.batchGetVideoCommentsByRootIds(parentIdList);
+            //批量查询用户信息
+            Set<Long> userIdList = list.stream().map(VideoComment::getUserId).collect(Collectors.toSet());
+            Set<Long> replyUserIdList = childCommentList.stream().map(VideoComment::getUserId).collect(Collectors.toSet());
+            userIdList.addAll(replyUserIdList);
+            List<UserInfo> userInfoList = videoDao.batchGetUserInfoByUserIds(userIdList);
+            Map<Long, UserInfo> userInfoMap = userInfoList.stream().collect(Collectors.toMap(UserInfo::getUserId, userInfo -> userInfo));
+            //遍历一级评论和二级评论设置对应的信息
+            list.forEach(comment -> {
+                Long id = comment.getId();
+                List<VideoComment> childList = new ArrayList<>();
+                childCommentList.forEach(child-> {
+                    if (id.equals(child.getRootId())) {
+                        child.setUserInfo(userInfoMap.get(child.getUserId()));
+                        child.setReplyUserInfo(userInfoMap.get(child.getReplyUserId()));
+                        // TODO: 这里可以考虑用递归来遍历最底层的评论， 原写法限制只能两级评论
+                        childList.add(child);
+                    }
+                });
+                comment.setChildCommentList(childList);
+                comment.setUserInfo(userInfoMap.get(comment.getUserId()));
+            });
+        }
+
+        return new PageResult<>(total, list);
     }
 }

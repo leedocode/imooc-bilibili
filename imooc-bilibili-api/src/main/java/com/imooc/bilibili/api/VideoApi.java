@@ -112,4 +112,19 @@ public class VideoApi {
         result = videoService.getVideoCoins(videoId, userId);
         return new JsonResponse<>(result);
     }
+
+    @PostMapping("video-comments")
+    public JsonResponse<String> addVideoComment(@RequestBody VideoComment videoComment) {
+        Long userId = userSupport.getCurrentUserId();
+        videoService.addVideoComment(videoComment, userId);
+        return JsonResponse.success();
+    }
+
+    @GetMapping("video-comments")
+    public JsonResponse<PageResult<VideoComment>> pageListVideoComments(@RequestParam Long size,
+                                                                   @RequestParam Long no,
+                                                                   @RequestParam Long videoId) {
+        PageResult<VideoComment> result = videoService.pageListVideoComments(size, no, videoId);
+        return new JsonResponse<>(result);
+    }
 }
