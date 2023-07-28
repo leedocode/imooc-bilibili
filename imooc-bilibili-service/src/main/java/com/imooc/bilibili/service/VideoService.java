@@ -30,6 +30,9 @@ public class VideoService {
     @Autowired
     UserCoinService userCoinService;
 
+    @Autowired
+    UserService userService;
+
     @Transactional
     public void addVideos(Video video) {
         Date now = new Date();
@@ -226,5 +229,18 @@ public class VideoService {
         }
 
         return new PageResult<>(total, list);
+    }
+
+    public Map<String, Object> getVideoDetails(Long videoId) {
+        Video video = videoDao.getVideoById(videoId);
+        if (video == null) {
+            throw new ConditionException("非法视频");
+        }
+        Long userId = video.getUserId();
+        UserInfo userInfo = userService.getUserInfoByUserId(userId);
+        Map<String, Object> result = new HashMap<>();
+        result.put("video", video);
+        result.put("userInfo", userInfo);
+        return result;
     }
 }
