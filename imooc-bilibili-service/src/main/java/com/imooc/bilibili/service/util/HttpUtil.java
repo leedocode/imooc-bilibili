@@ -99,6 +99,8 @@ public class HttpUtil {
 			con.setRequestProperty(key, value);
 		}
 		con.connect();
+		int responseCode1 = con.getResponseCode();
+		//InputStream is = con.getErrorStream();
 		BufferedInputStream bis = new BufferedInputStream(con.getInputStream());
 		OutputStream os = response.getOutputStream();
 		int responseCode = con.getResponseCode();

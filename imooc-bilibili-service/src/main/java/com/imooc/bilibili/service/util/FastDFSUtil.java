@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -145,6 +146,8 @@ public class FastDFSUtil {
             randomAccessFile.seek(i);
             byte[] bytes = new byte[SLICE_SIZE];
             int len = randomAccessFile.read(bytes);
+            //相对路径不能在开头加/，也就是说不能用/tmpfile/ 因为当前工作目录会被解析为/Users/liweijie/IdeaProjects/Imooc_Project/imooc-bilibili/
+            //也就是说已经有斜杠了
             String path = "tmpfile/" + count + "." + fileType;
             File slice = new File(path);
             FileOutputStream fos = new FileOutputStream(slice);
@@ -181,12 +184,12 @@ public class FastDFSUtil {
             String header = headerNames.nextElement();
             headers.put(header, request.getHeader(header));
         }
-        String rangeStr = request.getHeader("range");
+        String rangeStr = request.getHeader("Range");
         String[] range;
         if (StringUtil.isNullOrEmpty(rangeStr)) {
             rangeStr = "byte=0-" + (totalFileSize - 1);
         }
-        range = rangeStr.split("byte= | -");
+        range = rangeStr.split("byte=|-");
         long begin = 0;
         if (range.length >= 2) {
             begin = Long.parseLong(range[1]);
@@ -204,6 +207,10 @@ public class FastDFSUtil {
         response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
         //将对应数据通过输出流写入响应传给前端，这里就是视频会响应给前端
         HttpUtil.get(url, headers, response);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(System.getProperty("user.dir"));
     }
 
 }
